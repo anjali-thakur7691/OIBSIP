@@ -1,6 +1,3 @@
-<p align="center">
-  <img src="assets/bmi-wellness-banner.svg" alt="BMI Wellness Tracker banner" width="100%" />
-</p>
 
 <p align="center">
   <img src="assets/bmi-reference.png" alt="BMI meter reference" width="68%" />
