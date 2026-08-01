@@ -7,10 +7,6 @@
 </p>
 
 <p align="center">
-  <img src="assets/bmi-calculator-illustration.jpg" alt="BMI calculator category illustration" width="48%" />
-</p>
-
-<p align="center">
   <b>A modern Streamlit BMI calculator with personal wellness insights, history and analytics.</b>
 </p>
 
