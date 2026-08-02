@@ -47,6 +47,47 @@ def home():
     return render_template("index.html")
 
 # ==========================================
+# Process Command Route (For JavaScript)
+# ==========================================
+
+@app.route("/process", methods=["POST"])
+def process_command():
+    try:
+        data = request.get_json()
+        command = data.get("command", "")
+
+        if not command:
+            return jsonify({
+                "success": False,
+                "command": "",
+                "response": "Sorry, I didn't receive any command."
+            })
+
+        print("User :", command)
+
+        # NLP Processing
+        detected_command = identify_command(command)
+        print("Detected :", detected_command)
+
+        # Execute Command
+        response = execute_command(detected_command)
+        print("Jarvis :", response)
+
+        return jsonify({
+            "success": True,
+            "command": detected_command,
+            "response": response
+        })
+
+    except Exception as e:
+        print("ERROR :", e)
+        return jsonify({
+            "success": False,
+            "command": "",
+            "response": str(e)
+        })
+
+# ==========================================
 # Listen Route
 # ==========================================
 
