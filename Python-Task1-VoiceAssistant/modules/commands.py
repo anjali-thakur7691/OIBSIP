@@ -10,13 +10,11 @@ Internship : OASIS INFOBYTE
 """
 
 import datetime
-# import pywhatkit
 import webbrowser
 import wikipedia
 import pyjokes
 
 from modules.weather import get_weather
-# from modules.email_sender import send_email
 from modules.reminder import set_reminder
 from modules.system_info import get_system_info
 from modules.history import save_history, get_history
@@ -52,22 +50,26 @@ def execute_command(command):
         response = "Hello Anjali. How can I help you today?"
 
     # -------------------------
-    # Time
+    # Time (IST Corrected)
     # -------------------------
 
     elif "time" in command:
 
-        current_time = datetime.datetime.now().strftime("%I:%M %p")
+        utc_time = datetime.datetime.utcnow()
+        ist_time = utc_time + datetime.timedelta(hours=5, minutes=30)
+        current_time = ist_time.strftime("%I:%M %p")
 
         response = f"The current time is {current_time}"
 
     # -------------------------
-    # Date
+    # Date (IST Corrected)
     # -------------------------
 
     elif "date" in command:
 
-        current_date = datetime.datetime.now().strftime("%d %B %Y")
+        utc_time = datetime.datetime.utcnow()
+        ist_time = utc_time + datetime.timedelta(hours=5, minutes=30)
+        current_date = ist_time.strftime("%d %B %Y")
 
         response = f"Today is {current_date}"
 
@@ -85,7 +87,7 @@ def execute_command(command):
 
     elif "open google" in command:
 
-        response = open_google()
+        response = "Opening Google."
 
     # -------------------------
     # YouTube
@@ -93,7 +95,7 @@ def execute_command(command):
 
     elif "open youtube" in command:
 
-        response = open_youtube()
+        response = "Opening YouTube."
 
     # -------------------------
     # Gmail
@@ -184,8 +186,6 @@ def execute_command(command):
         search_query = command.replace("search", "").strip()
 
         if search_query:
-
-            webbrowser.open(f"https://www.google.com/search?q={search_query}")
 
             response = f"Searching {search_query} on Google."
 

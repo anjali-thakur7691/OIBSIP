@@ -1,29 +1,140 @@
-const $ = (id) => document.getElementById(id);
-const micButton = $("micButton"), commandText = $("command"), responseText = $("response"), statusText = $("status"), orb = $("orb");
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+document.addEventListener("DOMContentLoaded", () => {
+    const micButton = document.getElementById("micButton");
+    const commandInput = document.getElementById("commandInput");
+    const commandForm = document.getElementById("commandForm");
+    const commandDisplay = document.getElementById("command");
+    const responseDisplay = document.getElementById("response");
+    const historyPanel = document.getElementById("historyPanel");
+    const historyList = document.getElementById("historyList");
+    const clearHistoryBtn = document.getElementById("clearHistory");
 
-function setListening(active) { micButton.disabled = active; micButton.innerHTML = active ? "🎙 Listening…" : "🎙 Start listening"; statusText.textContent = active ? "Listening carefully…" : "Ready to listen"; orb.classList.toggle("active", active); }
-function speak(text) { if (!window.speechSynthesis) return; window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = "en-IN"; utterance.rate = .95; window.speechSynthesis.speak(utterance); }
-async function sendCommand(query) {
-  if (!query.trim()) return;
-  commandText.textContent = query; responseText.textContent = "Thinking…"; statusText.textContent = "Processing command";
-  try {
-    const res = await fetch(`/listen?command=${encodeURIComponent(query)}`);;
-    const data = await res.json(); responseText.textContent = data.response; statusText.textContent = "Ready to listen"; speak(data.response);
-    if (data.action === "open_url") window.open(data.data, "_blank", "noopener");
-    if (data.action === "reminder") setTimeout(() => { const note = `Reminder: ${data.data}`; responseText.textContent = note; speak(note); }, 60000);
-    if (data.action === "show_history") loadHistory();
-  } catch { responseText.textContent = "I could not connect to the Python server. Please try again."; statusText.textContent = "Connection issue"; }
-}
-if (SpeechRecognition) {
-  const recognition = new SpeechRecognition(); recognition.lang = "en-IN"; recognition.interimResults = false; recognition.maxAlternatives = 1;
-  micButton.addEventListener("click", () => { setListening(true); recognition.start(); });
-  recognition.onresult = (event) => sendCommand(event.results[0][0].transcript);
-  recognition.onerror = () => { responseText.textContent = "I could not understand that. You can type your command instead."; setListening(false); };
-  recognition.onend = () => setListening(false);
-} else { micButton.disabled = true; statusText.textContent = "Voice input is not supported by this browser. Use the text box below."; }
-$("commandForm").addEventListener("submit", (event) => { event.preventDefault(); const input=$("commandInput"); sendCommand(input.value); input.value=""; });
-document.querySelectorAll("[data-command]").forEach(button => button.addEventListener("click", () => sendCommand(button.dataset.command)));
-async function loadHistory() { const data = await (await fetch("/history")).json(); $("historyList").innerHTML = data.length ? data.map(item => `<li><strong>${escapeHtml(item.command)}</strong><br><small>${item.time}</small></li>`).join("") : "<li>No commands yet.</li>"; $("historyPanel").classList.remove("hidden"); }
-function escapeHtml(value) { const el=document.createElement("div"); el.textContent=value; return el.innerHTML; }
-$("clearHistory").addEventListener("click", async () => { await fetch("/history", {method:"DELETE"}); loadHistory(); });
+    // Speech Recognition Setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            document.getElementById("status").textContent = "Listening...";
+            micButton.classList.add("listening");
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            commandDisplay.textContent = transcript;
+            sendToServer(transcript);
+        };
+
+        recognition.onerror = (event) => {
+            document.getElementById("status").textContent = "Ready to listen";
+            micButton.classList.remove("listening");
+        };
+
+        recognition.onend = () => {
+            document.getElementById("status").textContent = "Ready to listen";
+            micButton.classList.remove("listening");
+        };
+    }
+
+    if (micButton) {
+        micButton.addEventListener("click", () => {
+            if (recognition) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    recognition.stop();
+                }
+            } else {
+                alert("Speech recognition is not supported in your browser.");
+            }
+        });
+    }
+
+    if (commandForm) {
+        commandForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = commandInput.value.trim();
+            if (text) {
+                commandDisplay.textContent = text;
+                sendToServer(text);
+                commandInput.value = "";
+            }
+        });
+    }
+
+    // Quick Buttons Handler
+    document.querySelectorAll('.quick button').forEach(button => {
+        button.addEventListener('click', () => {
+            const cmd = button.getAttribute('data-command');
+            commandDisplay.textContent = cmd;
+            sendToServer(cmd);
+        });
+    });
+
+    // Send Command to Flask Backend
+    function sendToServer(cmd) {
+        fetch('/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ command: cmd })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resText = data.response;
+            responseDisplay.textContent = resText;
+
+            // Handle browser actions (YouTube, Google, Search)
+            if (resText.includes("Opening YouTube")) {
+                window.open("https://www.youtube.com", "_blank");
+            } else if (resText.includes("Opening Google")) {
+                window.open("https://www.google.com", "_blank");
+            } else if (resText.includes("Searching") && resText.includes("on Google")) {
+                let searchQuery = resText.replace("Searching ", "").replace(" on Google.", "").trim();
+                window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
+            }
+
+            // Show History if requested
+            if (cmd.toLowerCase().includes("show history")) {
+                loadHistory();
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            responseDisplay.textContent = "Sorry, something went wrong.";
+        });
+    }
+
+    function loadHistory() {
+        fetch('/history')
+        .then(res => res.json())
+        .then(data => {
+            historyList.innerHTML = "";
+            if (data.history && data.history.length > 0) {
+                historyPanel.classList.remove("hidden");
+                data.history.forEach(item => {
+                    const li = document.createElement("li");
+                    li.textContent = `You: ${item.command} | Jarvis: ${item.response}`;
+                    historyList.appendChild(li);
+                });
+            } else {
+                historyList.innerHTML = "<li>No history found.</li>";
+                historyPanel.classList.remove("hidden");
+            }
+        });
+    }
+
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener("click", () => {
+            fetch('/clear_history', { method: 'POST' })
+            .then(() => {
+                historyList.innerHTML = "";
+                historyPanel.classList.add("hidden");
+            });
+        });
+    }
+});
