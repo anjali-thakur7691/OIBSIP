@@ -15,13 +15,11 @@ import webbrowser
 import wikipedia
 import pyjokes
 
-
-
 from modules.weather import get_weather
 # from modules.email_sender import send_email
 from modules.reminder import set_reminder
 from modules.system_info import get_system_info
-from modules.history import save_history
+from modules.history import save_history, get_history
 
 from modules.music import (
     play_music,
@@ -168,15 +166,16 @@ def execute_command(command):
     elif "resume music" in command:
 
         response = resume_music()
-        # -------------------------
-        # Next Song
-        # -------------------------
+
+    # -------------------------
+    # Next Song
+    # -------------------------
 
     elif "next song" in command:
 
         response = "Next song feature will be added soon."
 
-            # -------------------------
+    # -------------------------
     # Google Search
     # -------------------------
 
@@ -195,12 +194,12 @@ def execute_command(command):
             response = "Please tell me what you want to search."
 
     # -------------------------
-    # Wikipedia
+    # Wikipedia (Who is / What is / Tell me about)
     # -------------------------
 
-    elif command.startswith("who is"):
+    elif command.startswith("who is") or command.startswith("what is") or command.startswith("tell me about"):
 
-        person = command.replace("who is", "").strip()
+        person = command.replace("who is", "").replace("what is", "").replace("tell me about", "").strip()
 
         try:
 
@@ -235,20 +234,37 @@ def execute_command(command):
     # Reminder
     # -------------------------
 
-    elif "set reminder" in command:
+    elif "set reminder" in command or "remind me" in command:
 
         response = set_reminder(
             10,
             "Please drink water."
         )
 
-# -------------------------
-# Email
-# -------------------------
+    # -------------------------
+    # Email
+    # -------------------------
 
     elif "send email" in command:
 
         response = "Email feature is ready. Browser form connection will be added soon."
+
+    # -------------------------
+    # Show History
+    # -------------------------
+
+    elif "show history" in command:
+
+        response = "Here is your recent command history."
+
+    # -------------------------
+    # Privacy
+    # -------------------------
+
+    elif "privacy" in command:
+
+        response = "Voice recognition happens in your browser and text commands are handled securely."
+
     # -------------------------
     # Exit
     # -------------------------
@@ -266,8 +282,6 @@ def execute_command(command):
     else:
 
         response = "Sorry, I don't understand this command."
-
-   
 
     # -------------------------
     # Save History
