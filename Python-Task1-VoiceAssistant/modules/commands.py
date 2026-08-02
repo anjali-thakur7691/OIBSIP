@@ -10,7 +10,8 @@ Internship : OASIS INFOBYTE
 """
 
 import datetime
-import pywhatkit
+# import pywhatkit
+import webbrowser
 import wikipedia
 import pyjokes
 
@@ -185,7 +186,7 @@ def execute_command(command):
 
         if search_query:
 
-            pywhatkit.search(search_query)
+            webbrowser.open(f"https://www.google.com/search?q={search_query}")
 
             response = f"Searching {search_query} on Google."
 
