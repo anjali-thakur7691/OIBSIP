@@ -8,7 +8,7 @@ async function sendCommand(query) {
   if (!query.trim()) return;
   commandText.textContent = query; responseText.textContent = "Thinking…"; statusText.textContent = "Processing command";
   try {
-    const res = await fetch("/process-command", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query})});
+    const res = await fetch(`/listen?command=${encodeURIComponent(query)}`);;
     const data = await res.json(); responseText.textContent = data.response; statusText.textContent = "Ready to listen"; speak(data.response);
     if (data.action === "open_url") window.open(data.data, "_blank", "noopener");
     if (data.action === "reminder") setTimeout(() => { const note = `Reminder: ${data.data}`; responseText.textContent = note; speak(note); }, 60000);

@@ -9,13 +9,33 @@ Internship  : OASIS INFOBYTE
 """
 
 from flask import Flask, render_template, jsonify, request
+import os
+from config import ASSISTANT_NAME
 
-from modules.listen import listen
+# ==========================================
+# Safe Import (Render Compatible)
+# ==========================================
+
+try:
+    from modules.listen import listen
+    VOICE_AVAILABLE = True
+except Exception as e:
+    print("Listen Module Disabled :", e)
+
+    VOICE_AVAILABLE = False
+
+    def listen():
+        return ""
+
 from modules.commands import execute_command
 from modules.nlp import identify_command
+from modules.history import get_history, clear_history
+
+# ==========================================
+# Flask App
+# ==========================================
 
 app = Flask(__name__)
-
 
 # ==========================================
 # Home
@@ -25,7 +45,6 @@ app = Flask(__name__)
 def home():
 
     return render_template("index.html")
-
 
 # ==========================================
 # Listen Route
@@ -37,20 +56,36 @@ def voice():
     try:
 
         # ----------------------------------
-        # Quick Command From JavaScript
+        # Command from Browser / JavaScript
         # ----------------------------------
 
         command = request.args.get("command")
 
+
         # ----------------------------------
-        # Voice Command
+        # Voice Input (Only Local PC)
         # ----------------------------------
 
         if not command:
 
-            print("\n🎤 Listening...")
+            if VOICE_AVAILABLE:
 
-            command = listen()
+                print("🎤 Listening...")
+
+                command = listen()
+
+            else:
+
+                return jsonify({
+
+                    "success": False,
+
+                    "command": "",
+
+                    "response": "Voice input is not available on server."
+
+                })
+
 
         if not command:
 
@@ -64,29 +99,48 @@ def voice():
 
             })
 
+
         print("User :", command)
 
-        command = identify_command(command)
 
-        print("Detected :", command)
+        # ----------------------------------
+        # NLP Processing
+        # ----------------------------------
 
-        response = execute_command(command)
+        detected_command = identify_command(command)
+
+
+        print("Detected :", detected_command)
+
+
+        # ----------------------------------
+        # Execute Command
+        # ----------------------------------
+
+        response = execute_command(
+            detected_command
+        )
+
 
         print("Jarvis :", response)
+
 
         return jsonify({
 
             "success": True,
 
-            "command": command,
+            "command": detected_command,
 
             "response": response
 
         })
 
+
     except Exception as e:
 
+
         print("ERROR :", e)
+
 
         return jsonify({
 
@@ -99,8 +153,24 @@ def voice():
         })
 
 
+    # ==========================================
+# History Route
 # ==========================================
-# Health Check
+
+@app.route("/history", methods=["GET", "DELETE"])
+def history():
+
+    if request.method == "GET":
+        return jsonify(get_history())
+
+    clear_history()
+
+    return jsonify({
+        "success": True,
+        "message": "History cleared successfully."
+    })
+    # ==========================================
+# Health Check Route
 # ==========================================
 
 @app.route("/health")
@@ -110,10 +180,11 @@ def health():
 
         "status": "running",
 
-        "project": "AI Voice Assistant"
+        "assistant": ASSISTANT_NAME,
+
+        "voice": VOICE_AVAILABLE
 
     })
-
 
 # ==========================================
 # Main
@@ -131,12 +202,10 @@ if __name__ == "__main__":
 
     app.run(
 
-        host="127.0.0.1",
+        host="0.0.0.0",
 
         port=5000,
 
         debug=True
 
     )
-
-    

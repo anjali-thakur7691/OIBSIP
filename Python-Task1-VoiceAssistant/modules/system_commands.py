@@ -9,7 +9,6 @@ Internship  : OASIS INFOBYTE
 """
 
 import os
-import cv2
 import webbrowser
 
 
@@ -38,39 +37,10 @@ def open_calculator():
 # ==========================
 # Camera
 # ==========================
+
 def open_camera():
 
-    try:
-
-        camera = cv2.VideoCapture(0)
-
-        if not camera.isOpened():
-            return "Camera not found."
-
-        while True:
-
-            ret, frame = camera.read()
-
-            if not ret:
-                break
-
-            cv2.imshow("Jarvis Camera", frame)
-
-            key = cv2.waitKey(1)
-
-            if key == ord("q"):
-                break
-
-        camera.release()
-
-        cv2.destroyAllWindows()
-
-        return "Camera closed."
-
-    except Exception as e:
-
-        return f"Camera Error : {e}"
-
+    return "Camera feature works only on local desktop application."
 
 # ==========================
 # Google

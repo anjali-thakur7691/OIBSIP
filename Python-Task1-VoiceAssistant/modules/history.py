@@ -12,7 +12,6 @@ import json
 import os
 from datetime import datetime
 
-
 HISTORY_FILE = "data/history.json"
 
 
@@ -31,7 +30,10 @@ def save_history(command, response):
                 json.dump([], file)
 
         with open(HISTORY_FILE, "r") as file:
-            history = json.load(file)
+            try:
+                history = json.load(file)
+            except json.JSONDecodeError:
+                history = []
 
         history.append({
             "time": datetime.now().strftime("%d-%m-%Y %I:%M:%S %p"),
@@ -57,11 +59,15 @@ def get_history():
             return []
 
         with open(HISTORY_FILE, "r") as file:
-            history = json.load(file)
+            try:
+                history = json.load(file)
+            except json.JSONDecodeError:
+                history = []
 
         return history
 
-    except Exception:
+    except Exception as e:
+        print("History Error :", e)
         return []
 
 

@@ -8,28 +8,33 @@ Internship  : OASIS INFOBYTE
 ===========================================
 """
 
-import pyttsx3
+try:
+    import pyttsx3
+    from config import VOICE_RATE, VOICE_INDEX
 
-from config import VOICE_RATE, VOICE_INDEX
+    engine = pyttsx3.init()
+    engine.setProperty("rate", VOICE_RATE)
 
-# Initialize engine only once
-engine = pyttsx3.init()
+    voices = engine.getProperty("voices")
 
-engine.setProperty("rate", VOICE_RATE)
+    if len(voices) > VOICE_INDEX:
+        engine.setProperty("voice", voices[VOICE_INDEX].id)
 
-voices = engine.getProperty("voices")
+    TTS_AVAILABLE = True
 
-if len(voices) > VOICE_INDEX:
-    engine.setProperty("voice", voices[VOICE_INDEX].id)
+except Exception:
+    TTS_AVAILABLE = False
 
 
 def speak(text):
     """
-    Convert text to speech.
+    Convert text to speech (Render Safe)
     """
-
     print(f"Jarvis : {text}")
 
-    engine.say(text)
-
-    engine.runAndWait()
+    if TTS_AVAILABLE:
+        try:
+            engine.say(text)
+            engine.runAndWait()
+        except Exception:
+            pass

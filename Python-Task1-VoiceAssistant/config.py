@@ -45,7 +45,7 @@ PHRASE_TIME_LIMIT = 8
 
 # https://openweathermap.org/api
 
-WEATHER_API_KEY = ""
+WEATHER_API_KEY = "3d3a184f973e3fe276b3e1bf074d7376"
 
 CITY = "Balaghat"
 

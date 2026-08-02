@@ -14,10 +14,10 @@ import pywhatkit
 import wikipedia
 import pyjokes
 
-from modules.speak import speak
+
 
 from modules.weather import get_weather
-from modules.email_sender import send_email
+# from modules.email_sender import send_email
 from modules.reminder import set_reminder
 from modules.system_info import get_system_info
 from modules.history import save_history
@@ -167,6 +167,13 @@ def execute_command(command):
     elif "resume music" in command:
 
         response = resume_music()
+        # -------------------------
+        # Next Song
+        # -------------------------
+
+    elif "next song" in command:
+
+        response = "Next song feature will be added soon."
 
             # -------------------------
     # Google Search
@@ -234,24 +241,13 @@ def execute_command(command):
             "Please drink water."
         )
 
-    # -------------------------
-    # Email
-    # -------------------------
+# -------------------------
+# Email
+# -------------------------
 
     elif "send email" in command:
 
-        receiver = input("Receiver Email : ")
-
-        subject = input("Subject : ")
-
-        message = input("Message : ")
-
-        response = send_email(
-            receiver,
-            subject,
-            message
-        )
-
+        response = "Email feature is ready. Browser form connection will be added soon."
     # -------------------------
     # Exit
     # -------------------------
@@ -270,11 +266,7 @@ def execute_command(command):
 
         response = "Sorry, I don't understand this command."
 
-    # -------------------------
-    # Speak Response
-    # -------------------------
-
-    speak(response)
+   
 
     # -------------------------
     # Save History

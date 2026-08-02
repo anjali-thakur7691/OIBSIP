@@ -14,6 +14,9 @@ Internship : OASIS INFOBYTE
 # Identify Command
 # ==========================================
 
+from click import command
+
+
 def identify_command(command):
 
     command = command.lower().strip()
@@ -69,17 +72,15 @@ def identify_command(command):
 
     if any(word in command for word in [
 
-        "date",
+    "weather",
 
-        "today",
+    "temperature",
 
-        "today date",
+    "climate"
 
-        "current date"
+]):
 
-    ]):
-
-        return "date"
+        return command
 
 
     # ==========================================
