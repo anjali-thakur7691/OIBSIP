@@ -5,5 +5,4 @@ requests==2.32.3
 pywhatkit==5.4
 wikipedia==1.4.0
 pyjokes==0.8.3
-pygame==2.6.1
 psutil==6.1.0
