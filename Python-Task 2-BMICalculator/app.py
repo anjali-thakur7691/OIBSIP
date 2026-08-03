@@ -2,6 +2,10 @@
 import pandas as pd
 import streamlit as st
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+
 from bmi import CATEGORY_DETAILS, calculate_bmi, get_category, healthy_weight_range, imperial_to_metric, validate_input
 from csv_handler import CSVHandler, HEADERS
 from database import BMIDatabase
@@ -9,7 +13,11 @@ from graph import BMIGraph
 from gauge import create_bmi_gauge
 from pdf_report import PDFReport
 
-st.set_page_config(page_title="BMI Calculator", page_icon="assets/bmi-reference.png", layout="wide")
+st.set_page_config(
+    page_title="BMI Calculator",
+    page_icon=str(BASE_DIR / "assets" / "bmi-reference.png"),
+    layout="wide"
+)
 st.markdown("""<style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 html, body, [class*="css"] {font-family:'Nunito',sans-serif;}
