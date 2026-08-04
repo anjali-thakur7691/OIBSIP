@@ -3,3 +3,4 @@ __pycache__/
 database/bmi.db
 reports/
 *.pyc
+venv
