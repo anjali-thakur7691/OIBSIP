@@ -1,33 +1,92 @@
-# 🌦️ Python Weather App (Pro Edition)
+# 🌤️ Live Weather App
 
-A feature-rich desktop Weather Application built using Python (`Tkinter`) and the OpenWeatherMap API. It provides real-time weather information, hourly/daily forecasts, search history, and a dynamic Dark/Light mode theme switcher.
+A modern Weather Application built using **Python**, **Streamlit**, and the **OpenWeatherMap API**.
+
+## 🚀 Features
+
+- 🌍 Search weather by city name
+- 🌡️ Current Temperature
+- ☁️ Weather Description
+- 💧 Humidity
+- 🌬️ Wind Speed
+- 🌡️ Feels Like Temperature
+- 📈 Atmospheric Pressure
+- 📅 5-Day Weather Forecast
+- 🌡️ Celsius & Fahrenheit Support
+- 🎨 Responsive and Clean User Interface
+
+## 🛠️ Technologies Used
+
+- Python
+- Streamlit
+- Requests
+- OpenWeatherMap API
+
+## 📂 Project Structure
+
+```
+Weather-App/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+└── .streamlit/
+    └── config.toml
+```
+
+## 📦 Installation
+
+### Clone the repository
+
+```bash
+git clone https://github.com/your-username/weather-app.git
+```
+
+### Go to project folder
+
+```bash
+cd weather-app
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Run the project
+
+```bash
+streamlit run app.py
+```
+
+## 🔑 API Key
+
+Create a free API key from:
+
+https://openweathermap.org/api
+
+Replace your API key inside `app.py`.
+
+## 📸 Screenshots
+
+- Current Weather
+- 5-Day Forecast
+- Professional UI
+
+(Add screenshots here)
+
+## 🌐 Live Demo
+
+Add your Streamlit Cloud URL here after deployment.
+
+## 👩‍💻 Author
+
+**Anjali Thakur**
+
+GitHub:
+https://github.com/anjali-thakur7691
 
 ---
 
-## 📸 App Preview
-![Weather App Screenshot](Screenshot.png)
-
----
-
-## ✨ Features
-
-- **🔍 City Search & Auto Location:** Search any city worldwide or auto-detect your location using IP.
-- **🕒 Search History:** Automatically saves your last 5 searched cities for quick access using a dropdown combobox.
-- **🌙 Dark / Light Mode:** Seamlessly switch between Light and Dark themes with a single click.
-- **🌡️ Unit Toggle:** Switch dynamically between Celsius (°C) and Fahrenheit (°F).
-- **📊 Detailed Forecasts:** 
-  - 6-Hour upcoming forecast.
-  - 5-Day daily weather forecast.
-- **🎨 Live Weather Icons:** Real-time weather condition icons fetched directly from OpenWeatherMap.
-- **🛡️ Error Handling:** Robust error management for invalid city names, empty inputs, and network failures.
-
----
-
-## 🛠️ Prerequisites & Installation
-
-Make sure you have **Python** installed on your system. Follow these steps to set up the project locally:
-
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/AapkaUsername/Weather-App-Python.git](https://github.com/AapkaUsername/Weather-App-Python.git)
-   cd Weather-App-Python
+⭐ If you like this project, don't forget to star the repository.
